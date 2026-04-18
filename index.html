@@ -686,7 +686,12 @@
     body.lehrer-drucken #lehrer-grid {
       display: grid !important;
       grid-template-columns: repeat(2, 1fr) !important;
-      gap: 10mm !important;
+      gap: 6mm !important;
+    }
+
+    body.lehrer-drucken #lehrer-grid > div {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
     }
   }
 
