@@ -4046,7 +4046,7 @@ function renderQRSvg(text, cellSize) {
   var qr = qrcode(0, 'M');
   qr.addData(text);
   qr.make();
-  return qr.createSvgTag({ cellSize: cellSize || 4, margin: 2, scalable: true });
+  return qr.createSvgTag({ cellSize: cellSize || 4, margin: 2 });
 }
 
 function lehrerBuildGrid() {
