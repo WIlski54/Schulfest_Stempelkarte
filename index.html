@@ -832,6 +832,8 @@
     background: rgba(255,255,255,0.25);
   }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -1553,19 +1555,73 @@ function exportJSON() {
 // EXPORT PDF (native Browser-Druckfunktion)
 // ============================================================
 function exportPDF() {
-  // Vor dem Druck Name & Klasse sichern, damit die Werte im Druckbild erscheinen
   saveState();
 
-  // Eingabefelder für den Druck mit dem aktuellen Wert befüllen
-  // (sonst zeigt Safari beim Drucken nur das leere <input>-Feld)
   const nameInput = document.getElementById('nameInput');
   const klasseInput = document.getElementById('klasseInput');
   nameInput.setAttribute('value', nameInput.value);
   klasseInput.setAttribute('value', klasseInput.value);
 
-  // Kurz warten, damit das Rendering fertig ist, dann Druckdialog öffnen.
-  // iOS Safari zeigt dort automatisch „Als PDF speichern" an.
-  setTimeout(() => window.print(), 100);
+  const btn = document.querySelector('.btn-pdf');
+  const origText = btn.textContent;
+  btn.textContent = '⏳ PDF wird erstellt…';
+  btn.disabled = true;
+
+  // Elemente temporär ausblenden, die nicht ins PDF sollen
+  const hide = document.querySelectorAll('.actions, .modal-overlay, .confetti-container, .tap-hint, .scan-action');
+  hide.forEach(el => el.style.visibility = 'hidden');
+
+  const card = document.querySelector('.card-wrap');
+
+  html2canvas(card, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false
+  }).then(canvas => {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const usableW = pageW - margin * 2;
+    const usableH = pageH - margin * 2;
+
+    // Pixel pro mm (bei scale:2 doppelte Auflösung)
+    const pxPerMm = canvas.width / usableW;
+    const pageHeightPx = usableH * pxPerMm;
+
+    let offsetPx = 0;
+    let remaining = canvas.height;
+    let page = 0;
+
+    while (remaining > 0) {
+      if (page > 0) pdf.addPage();
+
+      const sliceH = Math.min(pageHeightPx, remaining);
+      const tmp = document.createElement('canvas');
+      tmp.width = canvas.width;
+      tmp.height = sliceH;
+      const ctx = tmp.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, tmp.width, tmp.height);
+      ctx.drawImage(canvas, 0, offsetPx, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+      pdf.addImage(tmp.toDataURL('image/png'), 'PNG', margin, margin, usableW, sliceH / pxPerMm);
+
+      offsetPx += sliceH;
+      remaining -= sliceH;
+      page++;
+    }
+
+    const filename = `stempelkarte_${(state.name || 'unbekannt').replace(/\s+/g, '_')}.pdf`;
+    pdf.save(filename);
+  }).finally(() => {
+    hide.forEach(el => el.style.visibility = '');
+    btn.textContent = origText;
+    btn.disabled = false;
+  });
 }
 
 // ============================================================
