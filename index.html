@@ -552,18 +552,28 @@
   /* === COMPLETION OVERLAY === */
   .complete-banner {
     display: none;
-    background: linear-gradient(135deg, var(--success), #059669);
-    color: white;
+    background: transparent;
+    color: var(--success);
     text-align: center;
     padding: 12px 16px;
     font-size: 0.95rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     animation: fadeIn 0.5s;
+    border-top: 2px solid var(--success);
+    border-bottom: 2px solid var(--success);
   }
 
   .complete-banner.active {
     display: block;
+  }
+
+  .complete-hahn {
+    display: block;
+    width: 120px;
+    height: auto;
+    margin: 8px auto 0;
+    background: transparent;
   }
 
   /* === CONFETTI === */
@@ -910,6 +920,7 @@
     <!-- COMPLETE BANNER -->
     <div class="complete-banner" id="completeBanner">
       🎉 Geschafft! Alle Stationen besucht! 🎉
+      <img src="Hahn.svg" class="complete-hahn" alt="Hahn">
     </div>
   </div>
 
