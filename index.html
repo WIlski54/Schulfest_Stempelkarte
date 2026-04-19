@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>GSM – Stempelkarte Tag der offenen Tür</title>
@@ -389,7 +389,7 @@
     border-radius: 8px;
     border: none;
     cursor: pointer;
-    min-height: 38px;
+    min-height: 44px;
     transition: all 0.2s;
   }
 
@@ -571,6 +571,7 @@
   .complete-hahn {
     display: block;
     width: 120px;
+    max-width: 100%;
     height: auto;
     margin: 8px auto 0;
     background: transparent;
@@ -830,6 +831,16 @@
 
   .scanner-cancel:active {
     background: rgba(255,255,255,0.25);
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 360px) {
+    .header h1 { font-size: 1.6rem; }
+    .header h2 { font-size: 1rem; }
+    .station-grid { gap: 6px; }
+    .station .label { font-size: 0.65rem; }
+    .actions { flex-wrap: wrap; }
+    .btn { flex: 1 1 auto; font-size: 0.75rem; }
   }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
